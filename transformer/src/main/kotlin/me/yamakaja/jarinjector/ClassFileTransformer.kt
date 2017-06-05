@@ -19,11 +19,16 @@ class ReplacementClassVisitor(visitor: ClassVisitor, val replacements: Map<Strin
 class ReplacementMethodVisitor(visitor: MethodVisitor, val replacements: Map<String, String>) : MethodVisitor(Opcodes.ASM5, visitor) {
 
     override fun visitLdcInsn(cst: Any?) {
-        var output = cst
-        if (cst is String)
-            replacements.forEach {
-                output = cst.replace(it.key, it.value)
-            }
+        if (cst !is String) {
+            super.visitLdcInsn(cst)
+            return
+        }
+
+        var output : String = cst
+
+        replacements.forEach {
+            output = output.replace(it.key, it.value)
+        }
 
         super.visitLdcInsn(output)
     }

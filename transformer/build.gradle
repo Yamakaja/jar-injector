@@ -1,0 +1,13 @@
+jar.archiveName = "injector.jar"
+
+dependencies {
+    compile "org.ow2.asm:asm-all:5.0.4"
+}
+jar {
+    from {
+        configurations.compile.collect {
+            it.isDirectory() ? it : zipTree(it)
+        }
+    }
+}
+

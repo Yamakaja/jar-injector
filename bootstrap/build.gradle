@@ -1,0 +1,13 @@
+jar {
+    manifest {
+        attributes "Main-Class": "me.yamakaja.jarinjector.bootstrap.JarInjectorBootstrapKt"
+    }
+
+    from("$rootDir/transformer/build/libs/injector.jar")
+
+    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }}
+}
+
+dependencies {
+    compileOnly project(":transformer")
+}
