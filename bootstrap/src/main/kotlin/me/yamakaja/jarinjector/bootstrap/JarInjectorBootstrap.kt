@@ -16,7 +16,7 @@ fun main(args: Array<String>) {
         return
     }
 
-    val file = File.createTempFile("injector", ".jar")
+    val file = File.createTempFile("injector-", ".jar")
     file.deleteOnExit()
 
     Files.copy(Thread.currentThread().contextClassLoader.getResource("injector.jar").openStream(), file.toPath(), StandardCopyOption.REPLACE_EXISTING)

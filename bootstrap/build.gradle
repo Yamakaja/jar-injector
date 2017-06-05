@@ -6,6 +6,8 @@ jar {
     from("$rootDir/transformer/build/libs/injector.jar")
 
     from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }}
+
+    archiveName = "jarinjector.jar"
 }
 
 dependencies {
