@@ -63,7 +63,6 @@ public class Bootstrap {
             Files.move(newFile.toPath(), file.toPath(), StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
             e.printStackTrace();
-            return;
         }
 
     }

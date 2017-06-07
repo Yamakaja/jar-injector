@@ -1,5 +1,7 @@
 package me.yamakaja.jarinjector;
 
+import com.sun.org.apache.xpath.internal.SourceTree;
+
 import java.io.*;
 import java.nio.charset.Charset;
 import java.util.Map;
@@ -27,13 +29,20 @@ public class ConstantPoolParser {
 
     public ConstantPoolParser(String className, DataInputStream inputStream, DataOutputStream outputStream, Map<String, String> stringReplacements) {
         try {
-            skip(inputStream, outputStream, 8);
+            int magic = inputStream.readInt();
+
+            if (magic != -889275714)
+                throw new RuntimeException("Class " + className + " starts with unknown magic number!");
+
+            outputStream.writeInt(magic);
+
+            skip(inputStream, outputStream, 4);
 
             int length = inputStream.readUnsignedShort();
             outputStream.writeShort(length);
 
             for (int i = 1; i < length; ++i) {
-                int size;
+                int toSkip;
 
                 int tag = inputStream.readUnsignedByte();
                 outputStream.writeByte(tag);
@@ -45,32 +54,32 @@ public class ConstantPoolParser {
                     case FLOAT:
                     case NAME_TYPE:
                     case INDY:
-                        size = 4;
+                        toSkip = 4;
                         break;
                     case LONG:
                     case DOUBLE:
-                        size = 8;
+                        toSkip = 8;
                         ++i;
                         break;
                     case UTF8:
                         handleString(inputStream, outputStream, inputStream.readUnsignedShort(), stringReplacements);
-                        size = 0;
+                        toSkip = 0;
                         break;
                     case HANDLE:
-                        size = 3;
+                        toSkip = 3;
                         break;
                     default:
-                        size = 2;
+                        toSkip = 2;
                         break;
                 }
 
-                skip(inputStream, outputStream, size);
+                skip(inputStream, outputStream, toSkip);
             }
             int accessFlags = inputStream.readUnsignedShort();
             outputStream.writeShort(accessFlags);
 
             if ((accessFlags & (0x0001 | 0x0010 | 0x0020 | 0x0200 | 0x0400 | 0x1000 | 0x2000 | 0x4000)) != accessFlags)
-                throw new RuntimeException("Invalid bytes in header!");
+                throw new RuntimeException("Invalid bytes in header of " + className + "!");
 
             int count;
             byte[] buffer = new byte[1024];
@@ -80,7 +89,8 @@ public class ConstantPoolParser {
             inputStream.close();
 
         } catch (IOException e) {
-            e.printStackTrace();
+            System.err.println("An error occurred while parsing " + className);
+            throw new RuntimeException(e);
         }
     }
 
