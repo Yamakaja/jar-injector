@@ -1,10 +1,9 @@
 package me.yamakaja.jarinjector;
 
-import com.sun.org.apache.xpath.internal.SourceTree;
-
 import java.io.*;
 import java.nio.charset.Charset;
 import java.util.Map;
+import java.util.concurrent.atomic.LongAdder;
 
 /**
  * Created by Yamakaja on 06.06.17.
@@ -25,9 +24,14 @@ public class ConstantPoolParser {
     private static final int UTF8 = 1;
     private static final int HANDLE = 15;
     private static final int INDY = 18;
+    public static LongAdder timeCounter = new LongAdder();
     private static Charset utf8 = Charset.forName("UTF-8");
 
     public ConstantPoolParser(String className, DataInputStream inputStream, DataOutputStream outputStream, Map<String, String> stringReplacements) {
+        long startTime = 0;
+        if (Bootstrap.debug)
+            startTime = System.nanoTime();
+
         try {
             int magic = inputStream.readInt();
 
@@ -90,8 +94,11 @@ public class ConstantPoolParser {
 
         } catch (IOException e) {
             System.err.println("An error occurred while parsing " + className);
+            e.printStackTrace();
             throw new RuntimeException(e);
         }
+        if (Bootstrap.debug)
+            timeCounter.add(System.nanoTime() - startTime);
     }
 
     private static void skip(InputStream input, OutputStream output, int amount) throws IOException {
