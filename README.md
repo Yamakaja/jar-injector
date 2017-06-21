@@ -10,7 +10,7 @@ A jar string-injection tool
 
 `./gradlew build`
 
-You can now get the `jarinjector.jar` from `bootstrap/build/libs/jarinjector.jar`
+You can now get the `injector.jar` from `build/libs/injector.jar`
 
 #### Inject into a jar
 
@@ -18,10 +18,10 @@ You can now get the `jarinjector.jar` from `bootstrap/build/libs/jarinjector.jar
 
 where
 
-`<replacement>` = `<replace>=<with>`
+`<replacement>` = `<replace> <with>`
 
 #### Example
 
 For example, to insert the download time into a jar, you could have a shell exec modifying it like this before the actual download:
 
-    java -jar jarinjector.jar jar-to-edit.jar "%%__DOWNLOADTIME__%%=`date`"
+    java -jar injector.jar jar-to-edit.jar "%%__DOWNLOADTIME__%%" "`date`"
