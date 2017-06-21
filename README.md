@@ -6,7 +6,7 @@ A jar string-injection tool
 
 #### Clone and build
 
-`git clone git@github.com:Yamakaja/jar-injector.git`
+`git clone https://github.com/Yamakaja/jar-injector.git`
 
 `./gradlew build`
 
