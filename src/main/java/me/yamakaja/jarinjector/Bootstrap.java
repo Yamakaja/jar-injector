@@ -20,20 +20,23 @@ public class Bootstrap {
     public static void main(String[] args) {
         long time = System.currentTimeMillis();
 
-        if (args.length < 2) {
+        if (args.length < 3) {
             System.out.println("Usage: java -jar <injector.jar> <jar-to-edit> <replacement>+");
             return;
         }
 
+        if (args.length % 2 != 1) {
+            System.err.println("You have to provide a replacement for each target!");
+        }
+
         Map<String, String> replacements = new ConcurrentHashMap<>();
 
-        for (int i = 1; i < args.length; i++)
+        for (int i = 1; i < args.length; i += 2)
             try {
-                String[] split = args[i].split("=");
-                replacements.put(split[0], split[1]);
+                replacements.put(args[i], args[i + 1]);
             } catch (ArrayIndexOutOfBoundsException e) {
                 System.err.println("Invalid format: \"" + args[i] + "\"\n" +
-                        "Correct format: <placeholder>=<replacement>");
+                        "Correct format: <placeholder> <replacement>");
                 return;
             }
 
@@ -91,7 +94,7 @@ public class Bootstrap {
             }
 
             if (debug)
-            System.out.println("Writing parsed data: " + (System.currentTimeMillis() - time) + "ms");
+                System.out.println("Writing parsed data: " + (System.currentTimeMillis() - time) + "ms");
 
             jarOutputStream.flush();
             jarOutputStream.close();
@@ -102,7 +105,7 @@ public class Bootstrap {
         }
 
         if (debug)
-        System.out.println(ConstantPoolParser.timeCounter.doubleValue() / 1000000 + "ms were spent parsing class files!");
+            System.out.println(ConstantPoolParser.timeCounter.doubleValue() / 1000000 + "ms were spent parsing class files!");
     }
 
     private static void processEntry(JobManager jobManager, JarFile jarFile, JarEntry jarEntry, JarOutputStream jarOutputStream, Map<String, String> replacements) {
