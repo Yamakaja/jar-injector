@@ -27,6 +27,7 @@ public class Bootstrap {
 
         if (args.length % 2 != 1) {
             System.err.println("You have to provide a replacement for each target!");
+            return;
         }
 
         Map<String, String> replacements = new ConcurrentHashMap<>();
