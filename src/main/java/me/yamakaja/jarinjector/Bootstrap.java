@@ -99,6 +99,8 @@ public class Bootstrap {
             jarOutputStream.flush();
             jarOutputStream.close();
 
+            jarFile.close();
+
             Files.move(newFile.toPath(), file.toPath(), StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
             e.printStackTrace();
